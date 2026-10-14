@@ -13,7 +13,7 @@ En [start.spring.io](https://start.spring.io) (o con la extensión *Spring Initi
 |---|---|
 | Project | Maven |
 | Language | Java |
-| Spring Boot | la última versión estable que ofrezca (verificar que soporte Java 25) |
+| Spring Boot | la última versión estable que ofrezca |
 | Group | `ar.edu.utn.frc.dsi` |
 | Artifact | `ppai` |
 | Package name | `ar.edu.utn.frc.dsi.ppai` |
