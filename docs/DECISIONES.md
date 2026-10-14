@@ -3,7 +3,7 @@
 ## Tomadas
 
 | Tema | Decisión |
-|---|---|
+| Version de JDK a usar|Java 25 JDK|
 | Lombok | No (getters y setters generados por el IDE) |
 | Persistencia | JPA + Hibernate, con DTOs hacia el front |
 | Base de datos | H2 en archivo (`backend/data/`, ignorada por Git; se carga sola con un `DataLoader`) |
@@ -26,10 +26,7 @@
 2. Correo real: SMTP de Gmail, Mailtrap, MailHog u otro. Por ahora `CorreoSimulado` escribe en el log.
 3. Patrón de diseño de Gamma: reunión con el tutor (candidatos: Adapter o Strategy para el GPS, State para la máquina de estados).
 4. Otros modelos de GPS (NavTrack QX-7A, GeoPulse MTR-900): ¿se suman después?
-5. Unificar nombres distintos entre diagramas:
-   `esTuCMOrigenCMUsuario` / `esTuCMOrigenCMDeUsuario`, `getNumeroPrecinto` / `getNroPrecinto`,
-   `esTuCMCMDestino` / `esTuCMCMDestinoBolsin`.
 6. Cantidad real de integrantes y fechas de entrega del cronograma (para dimensionar los sprints).
 7. Seguridad: si el login propio alcanza o se prefiere Spring Security completo.
 8. Esquema de la BD: `ddl-auto=update` + `DataLoader` (por defecto) o Flyway.
-9. Verificar si la API mock (hecha para Java 17) corre bien con Java 25.
+
