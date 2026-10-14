@@ -28,5 +28,5 @@
 4. Otros modelos de GPS (NavTrack QX-7A, GeoPulse MTR-900): ¿se suman después?
 6. Cantidad real de integrantes y fechas de entrega del cronograma (para dimensionar los sprints).
 7. Seguridad: si el login propio alcanza o se prefiere Spring Security completo.
-8. Esquema de la BD: `ddl-auto=update` + `DataLoader` (por defecto) o Flyway.
+8. Esquema de la BD: `ddl-auto=update` + `DataLoader` (por defecto) o Flyway
 
