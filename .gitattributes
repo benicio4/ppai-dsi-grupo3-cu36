@@ -1,0 +1,15 @@
+# Normaliza los finales de línea entre Windows, Linux y macOS
+* text=auto
+
+# Los scripts de Unix deben tener siempre LF (si no, ./mvnw falla)
+mvnw text eol=lf
+*.sh text eol=lf
+
+# Los scripts de Windows deben tener CRLF
+*.cmd text eol=crlf
+*.bat text eol=crlf
+
+# Archivos binarios
+*.png binary
+*.jpg binary
+*.pdf binary

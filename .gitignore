@@ -1,0 +1,39 @@
+# ---------- Java / Maven ----------
+target/
+*.class
+*.jar
+!.mvn/wrapper/maven-wrapper.jar
+*.log
+hs_err_pid*
+
+# ---------- Node / React ----------
+node_modules/
+dist/
+build/
+.vite/
+npm-debug.log*
+.env
+.env.*
+!.env.example
+
+# ---------- Base de datos H2 (cada integrante tiene la suya) ----------
+backend/data/
+*.mv.db
+*.trace.db
+
+# ---------- Configuración local y credenciales ----------
+application-local.properties
+application-local.yml
+
+# ---------- IDEs ----------
+.idea/
+*.iml
+.vscode/*
+!.vscode/extensions.json
+.classpath
+.project
+.settings/
+
+# ---------- Sistema operativo ----------
+.DS_Store
+Thumbs.db
