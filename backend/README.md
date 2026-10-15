@@ -14,9 +14,9 @@ En [start.spring.io](https://start.spring.io) (o con la extensión *Spring Initi
 | Project | Maven |
 | Language | Java |
 | Spring Boot | la última versión estable que ofrezca |
-| Group | `ar.edu.utn.frc.dsi` |
+| Group | `grupo3` |
 | Artifact | `ppai` |
-| Package name | `ar.edu.utn.frc.dsi.ppai` |
+| Package name | `grupo3.ppai` |
 | Java | 25 |
 | Dependencias | Spring Web, Spring Data JPA, H2 Database, Validation, Spring Boot DevTools |
 
