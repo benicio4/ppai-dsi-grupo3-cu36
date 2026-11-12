@@ -29,12 +29,17 @@ public class CambioEstadoBolsin {
     @JoinColumn(name = "estadoId")
     private Estado estado;
 
+    @ManyToOne
+    @JoinColumn(name = "responsableId")
+    private Empleado responsable;
+
     protected CambioEstadoBolsin() {
     }
 
-    public CambioEstadoBolsin(LocalDateTime fechaInicio, Estado estado) {
+    public CambioEstadoBolsin(LocalDateTime fechaInicio, Estado estado, Empleado responsable) {
         this.fechaInicio = fechaInicio;
         this.estado = estado;
+        this.responsable = responsable;
     }
 
     public Long getId() {
@@ -65,15 +70,23 @@ public class CambioEstadoBolsin {
         this.estado = estado;
     }
 
+    public Empleado getResponsable() {
+        return responsable;
+    }
+
+    public void setResponsable(Empleado responsable) {
+        this.responsable = responsable;
+    }
+
     public Estado conocerEstado() {
-        return null;
+        return this.estado;
     }
 
     public boolean sosActual() {
-        return false;
+        return this.fechaFin == null;
     }
 
     public boolean sosEnviado() {
-        return false;
+        return this.estado.esEnviado();
     }
 }
