@@ -2,13 +2,17 @@ package grupo3.ppai.entidades;
 
 import java.time.LocalDate;
 import java.time.LocalTime;
+import java.util.ArrayList;
 
+import java.util.List;
+import jakarta.persistence.CascadeType;
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToOne;
+import jakarta.persistence.OneToMany;
 import jakarta.persistence.Table;
 
 @Entity
@@ -34,13 +38,9 @@ public class Bolsin {
     @JoinColumn(name = "idComisionMedicaDestino")
     private ComisionMedica destino;
 
-    // Asociacion "cambioEstado" (1..*) con CambioEstadoBolsin.
-    // Descomentar cuando exista la entidad CambioEstadoBolsin
-    // (agregar imports: OneToMany, CascadeType, java.util.List, java.util.ArrayList).
-    //
-    // @OneToMany(cascade = CascadeType.ALL, orphanRemoval = true)
-    // @JoinColumn(name = "idBolsin")
-    // private List<CambioEstadoBolsin> cambiosEstado = new ArrayList<>();
+    @OneToMany(cascade = CascadeType.ALL, orphanRemoval = true)
+    @JoinColumn(name = "idBolsin")
+    private List<CambioEstadoBolsin> cambiosEstado = new ArrayList<>();
 
     protected Bolsin() {
     }
@@ -126,14 +126,12 @@ public class Bolsin {
         return this.destino.getNombre();
     }
 
-    // Descomentar cuando exista CambioEstadoBolsin (con sosActual() y sosEnviado()).
-    //
-    // public boolean conocerCambioEstado() {
-    //     for (CambioEstadoBolsin cambio : cambiosEstado) {
-    //         if (cambio.sosActual()) {
-    //             return cambio.sosEnviado();
-    //         }
-    //     }
-    //     return false;
-    // }
+     public boolean conocerCambioEstado() {
+         for (CambioEstadoBolsin cambio : cambiosEstado) {
+             if (cambio.sosActual()) {
+                 return cambio.sosEnviado();
+            }
+        }
+        return false;
+     }
 }
