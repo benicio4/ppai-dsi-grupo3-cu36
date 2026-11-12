@@ -17,7 +17,7 @@ import jakarta.persistence.Table;
  */
 @Entity
 @Table(name = "CambiosEstadosBolsines")
-public class CambioEstado {
+public class CambioEstadoBolsin {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
@@ -29,10 +29,10 @@ public class CambioEstado {
     @JoinColumn(name = "estadoId")
     private Estado estado;
 
-    protected CambioEstado() {
+    protected CambioEstadoBolsin() {
     }
 
-    public CambioEstado(LocalDateTime fechaInicio, Estado estado) {
+    public CambioEstadoBolsin(LocalDateTime fechaInicio, Estado estado) {
         this.fechaInicio = fechaInicio;
         this.estado = estado;
     }
