@@ -14,12 +14,18 @@ import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToOne;
 import jakarta.persistence.OneToMany;
 import jakarta.persistence.Table;
+import lombok.AccessLevel;
+import lombok.Getter;
+import lombok.Setter;
 
 @Entity
 @Table(name = "Bolsines")
+@Setter
+@Getter
 public class Bolsin {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @Setter(AccessLevel.NONE)
     private Long id;
 
     private Integer numeroBolsin;
@@ -53,66 +59,6 @@ public class Bolsin {
         this.fecha = fecha;
         this.hora = hora;
         this.origen = origen;
-        this.destino = destino;
-    }
-
-    public Long getId() {
-        return id;
-    }
-
-    public Integer getNumeroBolsin() {
-        return numeroBolsin;
-    }
-
-    public void setNumeroBolsin(Integer numeroBolsin) {
-        this.numeroBolsin = numeroBolsin;
-    }
-
-    public Integer getNumeroPrecinto() {
-        return numeroPrecinto;
-    }
-
-    public void setNumeroPrecinto(Integer numeroPrecinto) {
-        this.numeroPrecinto = numeroPrecinto;
-    }
-
-    public Double getPeso() {
-        return peso;
-    }
-
-    public void setPeso(Double peso) {
-        this.peso = peso;
-    }
-
-    public LocalDate getFecha() {
-        return fecha;
-    }
-
-    public void setFecha(LocalDate fecha) {
-        this.fecha = fecha;
-    }
-
-    public LocalTime getHora() {
-        return hora;
-    }
-
-    public void setHora(LocalTime hora) {
-        this.hora = hora;
-    }
-
-    public ComisionMedica getOrigen() {
-        return origen;
-    }
-
-    public void setOrigen(ComisionMedica origen) {
-        this.origen = origen;
-    }
-
-    public ComisionMedica getDestino() {
-        return destino;
-    }
-
-    public void setDestino(ComisionMedica destino) {
         this.destino = destino;
     }
 
