@@ -116,6 +116,11 @@ public class Bolsin {
         this.destino = destino;
     }
 
+    // Usado por el DataLoader para armar el historial de estados de prueba
+    public void agregarCambioEstado(CambioEstadoBolsin cambioEstado) {
+        this.cambiosEstado.add(cambioEstado);
+    }
+
     // ---- Metodos del CU 36 ----
 
     public boolean esTuCMOrigenCMDeUsuario(ComisionMedica cmUsuario) {
