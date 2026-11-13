@@ -50,6 +50,10 @@ public class Empleado {
         this.comisionMedica = comisionMedica;
     }
 
+    public ComisionMedica getCM() {
+        return comisionMedica;
+    }
+
     public Rol getRol() {
         return rol;
     }
