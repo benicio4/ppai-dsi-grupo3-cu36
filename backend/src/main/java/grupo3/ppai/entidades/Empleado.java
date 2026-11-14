@@ -95,7 +95,7 @@ public class Empleado {
     }
     ;
 
-    public boolean esTuCMCMDestinoBolsin(String nombreCMDestinoBolsin) {
+    public boolean esTuCMDestinoBolsin(String nombreCMDestinoBolsin) {
         if (this.comisionMedica.getNombre().equals(nombreCMDestinoBolsin)) {
             return true;
         } else {
