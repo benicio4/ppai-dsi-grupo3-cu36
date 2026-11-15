@@ -21,6 +21,7 @@ public class Estado {
 
     private String nombre;
     private String descripcion;
+    private String ambito;
 
     protected Estado() {
     }
@@ -29,10 +30,11 @@ public class Estado {
     public Estado(String nombre, String descripcion, String ambito) {
         this.nombre = nombre;
         this.descripcion = descripcion;
+        this.ambito = ambito;
     }
 
     public boolean esEnviado() {
-        if (this.nombre.toLowerCase().equals("enviado")) {
+        if (this.nombre.toLowerCase().equals("enviado") && this.ambito.toLowerCase().equals("bolsin") ) {
             return true;
         }
         return false;
