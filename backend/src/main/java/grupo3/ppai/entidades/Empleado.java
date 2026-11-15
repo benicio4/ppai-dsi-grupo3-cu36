@@ -7,12 +7,18 @@ import jakarta.persistence.Id;
 import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToOne;
 import jakarta.persistence.Table;
+import lombok.AccessLevel;
+import lombok.Getter;
+import lombok.Setter;
 
 @Entity
 @Table(name = "Empleados")
+@Setter
+@Getter
 public class Empleado {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @Setter(AccessLevel.NONE)
     private Long id;
 
     private String apellido;
@@ -40,50 +46,6 @@ public class Empleado {
         this.nombre = nombre;
         this.rol = rol;
         this.comisionMedica = comisionMedica;
-    }
-
-    public ComisionMedica getComisionMedica() {
-        return comisionMedica;
-    }
-
-    public void setComisionMedica(ComisionMedica comisionMedica) {
-        this.comisionMedica = comisionMedica;
-    }
-
-    public ComisionMedica getCM() {
-        return comisionMedica;
-    }
-
-    public Rol getRol() {
-        return rol;
-    }
-
-    public void setRol(Rol rol) {
-        this.rol = rol;
-    }
-
-    public String getApellido() {
-        return apellido;
-    }
-
-    public void setApellido(String apellido) {
-        this.apellido = apellido;
-    }
-
-    public String getNombre() {
-        return nombre;
-    }
-
-    public void setNombre(String nombre) {
-        this.nombre = nombre;
-    }
-
-    public String getEmail() {
-        return email;
-    }
-
-    public void setEmail(String email) {
-        this.email = email;
     }
 
     public Empleado sosGCM() {

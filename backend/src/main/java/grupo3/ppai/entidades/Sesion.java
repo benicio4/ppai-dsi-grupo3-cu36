@@ -9,12 +9,18 @@ import jakarta.persistence.Id;
 import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToOne;
 import jakarta.persistence.Table;
+import lombok.AccessLevel;
+import lombok.Getter;
+import lombok.Setter;
 
 @Entity
 @Table(name = "Sesiones")
+@Setter
+@Getter
 public class Sesion {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @Setter(AccessLevel.NONE)
     private Long id;
 
     private LocalDateTime fechaHoraInicio;
@@ -30,34 +36,6 @@ public class Sesion {
     public Sesion(LocalDateTime fechaHoraInicio, LocalDateTime fechaHoraExpiracion, Usuario usuario) {
         this.fechaHoraInicio = fechaHoraInicio;
         this.fechaHoraExpiracion = fechaHoraExpiracion;
-        this.usuario = usuario;
-    }
-
-    public Long getId() {
-        return id;
-    }
-
-    public LocalDateTime getFechaHoraInicio() {
-        return fechaHoraInicio;
-    }
-
-    public void setFechaHoraInicio(LocalDateTime fechaHoraInicio) {
-        this.fechaHoraInicio = fechaHoraInicio;
-    }
-
-    public LocalDateTime getFechaHoraExpiracion() {
-        return fechaHoraExpiracion;
-    }
-
-    public void setFechaHoraExpiracion(LocalDateTime fechaHoraExpiracion) {
-        this.fechaHoraExpiracion = fechaHoraExpiracion;
-    }
-
-    public Usuario getUsuario() {
-        return usuario;
-    }
-
-    public void setUsuario(Usuario usuario) {
         this.usuario = usuario;
     }
 
