@@ -6,6 +6,6 @@ import org.springframework.stereotype.Component;
 public class ServicioNavTrackQX_7A {
 
     public String retrieveTrackingData(int nroBolsin, String codigoCMDestino, String apiKey){
-        // Falta Implementar
+        throw new UnsupportedOperationException("Pendiente de implementar");
     }
 }

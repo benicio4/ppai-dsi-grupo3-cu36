@@ -6,6 +6,6 @@ import org.springframework.stereotype.Component;
 public class ServicioXTR_4500L {
 
     public String getBolsinLocation(int nroBolsin, String codigoCMOrigen, String apiKey) {
-        // Falta Implementar
+        throw new UnsupportedOperationException("Pendiente de implementar"); // falta borrar este throw e implementar el servicio
     }
 }
