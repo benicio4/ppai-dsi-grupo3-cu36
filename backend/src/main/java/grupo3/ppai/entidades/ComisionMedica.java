@@ -19,7 +19,7 @@ public class ComisionMedica {
     @Setter(AccessLevel.NONE)
     private Long id;
 
-    private Integer codigo;
+    private String codigo;
     private String direccion;
     private String email;
     private String telefono;
@@ -28,7 +28,7 @@ public class ComisionMedica {
     protected ComisionMedica() {
     }
 
-    public ComisionMedica(Integer codigo, String direccion, String email, String telefono, String nombre) {
+    public ComisionMedica(String codigo, String direccion, String email, String telefono, String nombre) {
         this.codigo = codigo;
         this.direccion = direccion;
         this.email = email;

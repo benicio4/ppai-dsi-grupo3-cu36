@@ -1,0 +1,157 @@
+.pantalla {
+  max-width: 1000px;
+  margin: 0 auto;
+  padding: 24px 16px;
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+  text-align: left;
+}
+
+.pantalla__encabezado h1 {
+  margin: 0;
+  font-size: 1.6rem;
+}
+
+.info-cm {
+  margin: 4px 0 0;
+}
+
+.pantalla__cuerpo {
+  display: grid;
+  grid-template-columns: 240px 1fr;
+  gap: 16px;
+}
+
+@media (max-width: 700px) {
+  .pantalla__cuerpo {
+    grid-template-columns: 1fr;
+  }
+}
+
+.filtros {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.filtros label {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  font-size: 0.9rem;
+}
+
+.filtros .filtros__check {
+  flex-direction: row;
+  align-items: center;
+  gap: 8px;
+}
+
+.filtros input:not([type='checkbox']),
+.filtros select {
+  padding: 6px 8px;
+  border: 1px solid #c8c6cc;
+  border-radius: 6px;
+  font: inherit;
+}
+
+.mapa {
+  border: 1px dashed #c8c6cc;
+  border-radius: 8px;
+  padding: 12px;
+  min-height: 260px;
+}
+
+.mapa__aviso {
+  margin: 0 0 8px;
+  font-size: 0.85rem;
+  opacity: 0.75;
+}
+
+.mapa__lista {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(180px, 1fr));
+  gap: 8px;
+}
+
+.bolsin {
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 2px;
+  padding: 10px;
+  border: 1px solid #c8c6cc;
+  border-radius: 8px;
+  background: transparent;
+  color: inherit;
+  font: inherit;
+  cursor: pointer;
+  text-align: left;
+}
+
+.bolsin--sel {
+  border-color: #2563eb;
+  outline: 2px solid #2563eb;
+}
+
+.confirmacion {
+  border: 1px solid #c8c6cc;
+  border-radius: 8px;
+  padding: 12px 16px;
+}
+
+.confirmacion__botones,
+.pantalla__pie {
+  display: flex;
+  gap: 8px;
+}
+
+.boton {
+  padding: 8px 14px;
+  border: 1px solid #c8c6cc;
+  border-radius: 6px;
+  background: transparent;
+  color: inherit;
+  font: inherit;
+  cursor: pointer;
+}
+
+.boton:disabled {
+  opacity: 0.6;
+  cursor: default;
+}
+
+.boton--primario {
+  background: #2563eb;
+  border-color: #2563eb;
+  color: #fff;
+  align-self: flex-start;
+}
+
+.boton--peligro {
+  border-color: #dc2626;
+  color: #dc2626;
+}
+
+.mensaje {
+  margin: 0;
+  padding: 10px 12px;
+  border-radius: 6px;
+}
+
+.mensaje--exito {
+  background: rgba(22, 163, 74, 0.12);
+}
+
+.mensaje--aviso {
+  background: rgba(234, 179, 8, 0.15);
+}
+
+.mensaje--error {
+  background: rgba(220, 38, 38, 0.12);
+}

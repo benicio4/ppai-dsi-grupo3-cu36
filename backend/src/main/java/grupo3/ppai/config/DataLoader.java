@@ -67,16 +67,16 @@ public class DataLoader implements CommandLineRunner {
         Rol rolGCM = rolRepository.save(new Rol("Gerente de Comisión Médica", "GCM"));
 
         ComisionMedica cba = comisionMedicaRepository.save(new ComisionMedica(
-                1, "Av. Colón 1234, Córdoba", "cm.cordoba@correo.test", "3514000001", "CM Córdoba"));
+                "CM-CBA-02", "Av. Colón 1234, Córdoba", "cm.cordoba@correo.test", "3514000001", "CM Córdoba"));
         ComisionMedica ros = comisionMedicaRepository.save(new ComisionMedica(
-                2, "Bv. Oroño 500, Rosario", "cm.rosario@correo.test", "3414000002", "CM Rosario"));
+                "CM-ROS-04", "Bv. Oroño 500, Rosario", "cm.rosario@correo.test", "3414000002", "CM Rosario"));
         ComisionMedica mza = comisionMedicaRepository.save(new ComisionMedica(
-                3, "San Martín 800, Mendoza", "cm.mendoza@correo.test", "2614000003", "CM Mendoza"));
+                "CM-MDZ-03", "San Martín 800, Mendoza", "cm.mendoza@correo.test", "2614000003", "CM Mendoza"));
         ComisionMedica cat = comisionMedicaRepository.save(new ComisionMedica(
-                4, "Sarmiento 650, San Fernando del Valle de Catamarca", "cm.catamarca@correo.test", "3834000004",
-                "CM Catamarca"));
+                "CM-CAT-05", "Sarmiento 650, San Fernando del Valle de Catamarca", "cm.catamarca@correo.test",
+                "3834000004", "CM Catamarca"));
         ComisionMedica bsas = comisionMedicaRepository.save(new ComisionMedica(
-                5, "Av. de Mayo 1200, Ciudad Autónoma de Buenos Aires", "cm.buenosaires@correo.test", "1140000005",
+                "CM-BA-01", "Av. de Mayo 1200, Ciudad Autónoma de Buenos Aires", "cm.buenosaires@correo.test", "1140000005",
                 "CM Buenos Aires"));
 
         Empleado eb = empleadoRepository.save(new Empleado("Pérez", "Juan", "juan.perez@correo.test", rolEB, cba));
@@ -98,19 +98,19 @@ public class DataLoader implements CommandLineRunner {
 
         LocalDateTime hoy = LocalDateTime.now();
 
+        // Numeros de bolsin del 101 al 110: son los que la API mock de GPS reconoce
         // Enviados desde Cordoba: los que tiene que ver el EB logueado
-        crearBolsin(1001, 5001, cba, ros, eb, new Estado[] { creado, enviado }, hace2Dias, ayer);
-        crearBolsin(1002, 5002, cba, mza, eb, new Estado[] { creado, enviado }, hace2Dias, ayer);
-        crearBolsin(1003, 5003, cba, ros, eb, new Estado[] { creado, enviado }, hace2Dias, ayer);
-        crearBolsin(1006, 5006, cba, cat, eb, new Estado[] { creado, enviado }, hace2Dias, ayer);
-        crearBolsin(1007, 5007, cba, bsas, eb, new Estado[] { creado, enviado }, hace2Dias, ayer);
-        crearBolsin(1008, 5008, cba, bsas, eb, new Estado[] { creado, enviado }, hace2Dias, ayer);
-        // No deben aparecer: uno todavia Creado, uno ya Recibido, uno con otra CM origen
-        crearBolsin(1004, 5004, cba, mza, eb, new Estado[] { creado }, hace2Dias);
-        crearBolsin(1005, 5005, cba, ros, eb, new Estado[] { creado, enviado, recibido }, hace2Dias, ayer, hoy);
-        crearBolsin(2001, 6001, ros, cba, eb, new Estado[] { creado, enviado }, hace2Dias, ayer);
-        crearBolsin(4001, 7001, cat, bsas, eb, new Estado[] { creado, enviado }, hace2Dias, ayer);
-        crearBolsin(5001, 8001, bsas, cat, eb, new Estado[] { creado, enviado }, hace2Dias, ayer);
+        crearBolsin(101, 5001, cba, ros, eb, new Estado[] { creado, enviado }, hace2Dias, ayer);
+        crearBolsin(102, 5002, cba, mza, eb, new Estado[] { creado, enviado }, hace2Dias, ayer);
+        crearBolsin(104, 5004, cba, ros, eb, new Estado[] { creado, enviado }, hace2Dias, ayer);
+        crearBolsin(105, 5005, cba, cat, eb, new Estado[] { creado, enviado }, hace2Dias, ayer);
+        crearBolsin(106, 5006, cba, bsas, eb, new Estado[] { creado, enviado }, hace2Dias, ayer);
+        crearBolsin(107, 5007, cba, bsas, eb, new Estado[] { creado, enviado }, hace2Dias, ayer);
+        // No deben aparecer: uno todavia Creado, uno ya Recibido, dos con otra CM origen
+        crearBolsin(108, 5008, cba, mza, eb, new Estado[] { creado }, hace2Dias);
+        crearBolsin(109, 5009, cba, ros, eb, new Estado[] { creado, enviado, recibido }, hace2Dias, ayer, hoy);
+        crearBolsin(103, 5003, mza, bsas, eb, new Estado[] { creado, enviado }, hace2Dias, ayer);
+        crearBolsin(110, 5010, ros, cba, eb, new Estado[] { creado, enviado }, hace2Dias, ayer);
     }
 
     /** Arma el historial: cada cambio se cierra cuando empieza el siguiente; el ultimo queda actual. */
