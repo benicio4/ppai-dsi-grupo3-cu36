@@ -81,6 +81,11 @@
             <version>1.18.48</version>
             <scope>provided</scope>
         </dependency>
+        <dependency>
+            <groupId>org.json</groupId>
+            <artifactId>json</artifactId>
+            <version>20260814</version>
+        </dependency>
 	</dependencies>
 
 	<build>
