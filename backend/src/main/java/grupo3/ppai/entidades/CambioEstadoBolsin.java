@@ -9,6 +9,9 @@ import jakarta.persistence.Id;
 import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToOne;
 import jakarta.persistence.Table;
+import lombok.AccessLevel;
+import lombok.Getter;
+import lombok.Setter;
 
 /**
  * CambioEstadoBolsin en la vista estática.
@@ -17,9 +20,12 @@ import jakarta.persistence.Table;
  */
 @Entity
 @Table(name = "CambiosEstadosBolsines")
+@Setter
+@Getter
 public class CambioEstadoBolsin {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @Setter(AccessLevel.NONE)
     private Long id;
 
     private LocalDateTime fechaInicio;
@@ -39,42 +45,6 @@ public class CambioEstadoBolsin {
     public CambioEstadoBolsin(LocalDateTime fechaInicio, Estado estado, Empleado responsable) {
         this.fechaInicio = fechaInicio;
         this.estado = estado;
-        this.responsable = responsable;
-    }
-
-    public Long getId() {
-        return id;
-    }
-
-    public LocalDateTime getFechaInicio() {
-        return fechaInicio;
-    }
-
-    public void setFechaInicio(LocalDateTime fechaInicio) {
-        this.fechaInicio = fechaInicio;
-    }
-
-    public LocalDateTime getFechaFin() {
-        return fechaFin;
-    }
-
-    public void setFechaFin(LocalDateTime fechaFin) {
-        this.fechaFin = fechaFin;
-    }
-
-    public Estado getEstado() {
-        return estado;
-    }
-
-    public void setEstado(Estado estado) {
-        this.estado = estado;
-    }
-
-    public Empleado getResponsable() {
-        return responsable;
-    }
-
-    public void setResponsable(Empleado responsable) {
         this.responsable = responsable;
     }
 
