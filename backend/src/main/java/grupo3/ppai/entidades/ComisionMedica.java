@@ -13,7 +13,7 @@ public class ComisionMedica {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    private Integer codigo;
+    private String codigo;
     private String direccion;
     private String email;
     private String telefono;
@@ -22,7 +22,7 @@ public class ComisionMedica {
     protected ComisionMedica() {
     }
 
-    public ComisionMedica(Integer codigo, String direccion, String email, String telefono, String nombre) {
+    public ComisionMedica(String codigo, String direccion, String email, String telefono, String nombre) {
         this.codigo = codigo;
         this.direccion = direccion;
         this.email = email;
@@ -34,11 +34,11 @@ public class ComisionMedica {
         return id;
     }
 
-    public Integer getCodigo() {
+    public String getCodigo() {
         return codigo;
     }
 
-    public void setCodigo(Integer codigo) {
+    public void setCodigo(String codigo) {
         this.codigo = codigo;
     }
 
