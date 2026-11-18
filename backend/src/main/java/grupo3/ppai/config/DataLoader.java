@@ -73,7 +73,7 @@ public class DataLoader implements CommandLineRunner {
         ComisionMedica cba = comisionMedicaRepository.save(new ComisionMedica(
                 CODIGO_ORIGEN_DEMO, "Av. Colón 1234, Córdoba", CORREO_COMISION_DEMO, "3514000001", "CM Córdoba"));
         ComisionMedica ros = comisionMedicaRepository.save(new ComisionMedica(
-                "CM-ROS-04", "Bv. Oroño 500, Rosario", "cm.rosario@correo.test", "3414000002", "CM Rosario"));
+                "CM-ROS-02", "Bv. Oroño 500, Rosario", "cm.rosario@correo.test", "3414000002", "CM Rosario"));
         ComisionMedica mza = comisionMedicaRepository.save(new ComisionMedica(
                 "CM-MDZ-03", "San Martín 800, Mendoza", "cm.mendoza@correo.test", "2614000003", "CM Mendoza"));
         ComisionMedica cat = comisionMedicaRepository.save(new ComisionMedica(
@@ -109,12 +109,12 @@ public class DataLoader implements CommandLineRunner {
         crearBolsin(104, 5004, cba, ros, eb, new Estado[] { creado, enviado }, hace2Dias, ayer);
         crearBolsin(105, 5005, cba, cat, eb, new Estado[] { creado, enviado }, hace2Dias, ayer);
         crearBolsin(106, 5006, cba, bsas, eb, new Estado[] { creado, enviado }, hace2Dias, ayer);
-        crearBolsin(107, 5007, cba, bsas, eb, new Estado[] { creado, enviado }, hace2Dias, ayer);
+        crearBolsin(110, 5007, cba, ros, eb, new Estado[] { creado, enviado }, hace2Dias, ayer);
         // No deben aparecer: uno todavia Creado, uno ya Recibido, dos con otra CM origen
         crearBolsin(108, 5008, cba, mza, eb, new Estado[] { creado }, hace2Dias);
         crearBolsin(109, 5009, cba, ros, eb, new Estado[] { creado, enviado, recibido }, hace2Dias, ayer, hoy);
         crearBolsin(103, 5003, mza, bsas, eb, new Estado[] { creado, enviado }, hace2Dias, ayer);
-        crearBolsin(110, 5010, ros, cba, eb, new Estado[] { creado, enviado }, hace2Dias, ayer);
+        crearBolsin(107, 5010, ros, cba, eb, new Estado[] { creado, enviado }, hace2Dias, ayer);
     }
 
     /** Arma el historial: cada cambio se cierra cuando empieza el siguiente; el ultimo queda actual. */
