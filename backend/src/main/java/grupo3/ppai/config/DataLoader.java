@@ -33,7 +33,7 @@ public class DataLoader implements CommandLineRunner {
 
     private static final String NOMBRE_USUARIO_EB = "encargado.cba";
     private static final String CORREO_COMISION_DEMO = "cm.cordoba@correo.test";
-    private static final String CODIGO_ORIGEN_DEMO = "CM-CBA-01";
+    private static final String CODIGO_ORIGEN_DEMO = "CM-CBA-02";
 
     private final RolRepository rolRepository;
     private final ComisionMedicaRepository comisionMedicaRepository;
