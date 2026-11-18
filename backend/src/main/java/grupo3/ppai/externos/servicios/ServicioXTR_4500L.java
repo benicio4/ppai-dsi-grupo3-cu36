@@ -1,11 +1,29 @@
 package grupo3.ppai.externos.servicios;
 
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
+import org.springframework.web.client.RestClient;
 
-@Component // NO USO LA ANOTACIÓN SERVICE PORQUE ESO SE REFIERE A SERVICIO NUESTROS, NO EXTERNOS (aunque de todas formas no hace nada esa anotacion)
+@Component
 public class ServicioXTR_4500L {
 
+    private final RestClient restClient;
+
+    public ServicioXTR_4500L(@Value("${gps.api.base-url}") String baseUrl) {
+        this.restClient = RestClient.builder()
+                .baseUrl(baseUrl)
+                .build();
+    }
+
     public String getBolsinLocation(int nroBolsin, String codigoCMOrigen, String apiKey) {
-        throw new UnsupportedOperationException("Pendiente de implementar"); // falta borrar este throw e implementar el servicio
+        return restClient.get()
+                .uri(uriBuilder -> uriBuilder
+                        .path("/api/xtr-4500l/getBolsinLocation")
+                        .queryParam("numeroBolsin", nroBolsin)
+                        .queryParam("codigoComisionMedicaOrigen", codigoCMOrigen)
+                        .build())
+                .header("X-API-Key", apiKey)
+                .retrieve()
+                .body(String.class);
     }
 }
