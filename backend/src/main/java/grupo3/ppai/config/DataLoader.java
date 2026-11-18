@@ -32,6 +32,8 @@ import grupo3.ppai.repositorios.UsuarioRepository;
 public class DataLoader implements CommandLineRunner {
 
     private static final String NOMBRE_USUARIO_EB = "encargado.cba";
+    private static final String CORREO_COMISION_DEMO = "cm.cordoba@correo.test";
+    private static final String CODIGO_ORIGEN_DEMO = "CM-CBA-01";
 
     private final RolRepository rolRepository;
     private final ComisionMedicaRepository comisionMedicaRepository;
@@ -58,6 +60,8 @@ public class DataLoader implements CommandLineRunner {
     public void run(String... args) {
         if (usuarioRepository.count() == 0) {
             cargarDatos();
+        } else {
+            actualizarCodigoOrigenDemo();
         }
         asegurarSesionVigente();
     }
@@ -67,7 +71,7 @@ public class DataLoader implements CommandLineRunner {
         Rol rolGCM = rolRepository.save(new Rol("Gerente de Comisión Médica", "GCM"));
 
         ComisionMedica cba = comisionMedicaRepository.save(new ComisionMedica(
-                "CM-CBA-02", "Av. Colón 1234, Córdoba", "cm.cordoba@correo.test", "3514000001", "CM Córdoba"));
+                CODIGO_ORIGEN_DEMO, "Av. Colón 1234, Córdoba", CORREO_COMISION_DEMO, "3514000001", "CM Córdoba"));
         ComisionMedica ros = comisionMedicaRepository.save(new ComisionMedica(
                 "CM-ROS-04", "Bv. Oroño 500, Rosario", "cm.rosario@correo.test", "3414000002", "CM Rosario"));
         ComisionMedica mza = comisionMedicaRepository.save(new ComisionMedica(
@@ -126,6 +130,16 @@ public class DataLoader implements CommandLineRunner {
             bolsin.agregarCambioEstado(anterior);
         }
         bolsinRepository.save(bolsin);
+    }
+
+    // Conserva la base H2 existente y alinea la comisión de prueba con el bolsín 101 del GPS.
+    private void actualizarCodigoOrigenDemo() {
+        usuarioRepository.findAll().stream()
+                .filter(usuario -> NOMBRE_USUARIO_EB.equals(usuario.getNombre()))
+                .map(Usuario::getCMEmpleado)
+                .filter(cm -> "CM-CBA-02".equals(cm.getCodigo()) && CORREO_COMISION_DEMO.equals(cm.getEmail()))
+                .findFirst()
+                .ifPresent(cm -> cm.setCodigo(CODIGO_ORIGEN_DEMO));
     }
 
     private void asegurarSesionVigente() {

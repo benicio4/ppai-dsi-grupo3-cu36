@@ -1,6 +1,9 @@
 package grupo3.ppai.externos.servicios;
 
+import java.time.Duration;
+
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.http.client.SimpleClientHttpRequestFactory;
 import org.springframework.stereotype.Component;
 import org.springframework.web.client.RestClient;
 
@@ -10,8 +13,12 @@ public class ServicioXTR_4500L {
     private final RestClient restClient;
 
     public ServicioXTR_4500L(@Value("${gps.api.base-url}") String baseUrl) {
+        SimpleClientHttpRequestFactory requestFactory = new SimpleClientHttpRequestFactory();
+        requestFactory.setConnectTimeout(Duration.ofSeconds(2));
+        requestFactory.setReadTimeout(Duration.ofSeconds(3));
         this.restClient = RestClient.builder()
                 .baseUrl(baseUrl)
+                .requestFactory(requestFactory)
                 .build();
     }
 

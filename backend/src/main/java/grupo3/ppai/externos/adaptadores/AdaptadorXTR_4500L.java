@@ -1,6 +1,7 @@
 package grupo3.ppai.externos.adaptadores;
 
 import java.time.LocalDateTime;
+import java.time.format.DateTimeParseException;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -50,7 +51,7 @@ public class AdaptadorXTR_4500L implements IAdaptadorCoordenadasBolsines {
                 // 404: bolsín inexistente o código de CM que no coincide. Se saltea y se sigue con el resto.
                 log.warn("El GPS XTR-4500L no encontró el bolsín {}: {}", num, e.getMessage());
 
-            } catch (JSONException e) {
+            } catch (JSONException | DateTimeParseException e) {
                 // Respuesta sin datos o con formato inesperado.
                 log.warn("Respuesta inválida del GPS XTR-4500L para el bolsín {}: {}", num, e.getMessage());
             }

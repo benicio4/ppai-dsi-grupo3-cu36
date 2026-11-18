@@ -1,4 +1,5 @@
-import { useMemo, useState } from 'react'
+import { useCallback, useMemo, useState } from 'react'
+import InterfazGoogleMaps from './InterfazGoogleMaps.jsx'
 import './PantSeguimientoBolsines.css'
 
 const API = '/api/seguimiento-bolsines'
@@ -65,7 +66,6 @@ export default function PantSeguimientoBolsines() {
     setInfoCMlogeado(nombreCM)
   }
 
-  // PENDIENTE: dibujar el mapa con InterfazGoogleMaps; por ahora se listan los bolsines
   function mostrarMapaBolsines(bolsinesEnviados) {
     setBolsines(bolsinesEnviados)
   }
@@ -80,17 +80,15 @@ export default function PantSeguimientoBolsines() {
     setTxtCMdestino('')
   }
 
+  // Paso 8: se ofrece enviar el correo al GCM destino
+  const consultarEnvioMailGCM = useCallback(() => setConsultandoEnvioMail(true), [])
+
   // ---- Paso 7: el EB selecciona un bolsín ----
-  function tomarSeleccionBolsin(numeroBolsin) {
+  const tomarSeleccionBolsin = useCallback((numeroBolsin) => {
     setComboSeleccionBolsin(numeroBolsin)
     setMensaje(null)
     consultarEnvioMailGCM()
-  }
-
-  // Paso 8: se ofrece enviar el correo al GCM destino
-  function consultarEnvioMailGCM() {
-    setConsultandoEnvioMail(true)
-  }
+  }, [consultarEnvioMailGCM])
 
   // ---- Paso 9: el EB confirma (o no, A5) el envío del correo ----
   async function tomarSeleccionConfirmacion(confirmacion) {
@@ -204,8 +202,13 @@ export default function PantSeguimientoBolsines() {
             </label>
           </aside>
 
-          <div className="mapa" aria-label="Mapa de bolsines">
-            <p className="mapa__aviso">Mapa pendiente (InterfazGoogleMaps). Bolsines enviados:</p>
+          <div className="mapa">
+            {bolsinesFiltrados.length > 0 && (
+              <InterfazGoogleMaps
+                bolsines={bolsinesFiltrados}
+                tomarSeleccionBolsin={tomarSeleccionBolsin}
+              />
+            )}
             {bolsinesFiltrados.length === 0 && <p>Ningún bolsín coincide con el filtro.</p>}
             <ul className="mapa__lista">
               {bolsinesFiltrados.map((b) => (
@@ -217,6 +220,7 @@ export default function PantSeguimientoBolsines() {
                     <strong>Bolsín {b.numeroBolsin}</strong>
                     <span>Precinto {b.numeroPrecinto}</span>
                     <span>Destino: {b.cmDestino}</span>
+                    {!b.ubicacion && <span>Ubicación no disponible</span>}
                   </button>
                 </li>
               ))}

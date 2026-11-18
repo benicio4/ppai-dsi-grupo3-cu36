@@ -2,7 +2,9 @@ package grupo3.ppai.gestores;
 
 import java.time.LocalDateTime;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -10,6 +12,7 @@ import org.springframework.beans.factory.ObjectProvider;
 import org.springframework.beans.factory.config.ConfigurableBeanFactory;
 import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Component;
+import org.springframework.web.client.RestClientException;
 
 import grupo3.ppai.entidades.Bolsin;
 import grupo3.ppai.entidades.ComisionMedica;
@@ -57,12 +60,16 @@ public class GestorSeguimientoBolsines {
     private final List<Integer> numerosBolsines = new ArrayList<>();
     private final List<Integer> numerosPrecintoBolsines = new ArrayList<>();
     private final List<String> cmDestinoBolsines = new ArrayList<>();
-    private List<ArrayList<Object>> datosGPS;
+    private List<ArrayList<Object>> datosGPS = List.of();
+    private final Map<Integer, UbicacionBolsin> ubicacionesPorBolsin = new HashMap<>();
     private Bolsin seleccionBolsin;
     private boolean seleccionConfirmacion;
     private String emailGCMD;
     private String mensajeEjecucionCU;
     private Empleado gerenteEmpleado;
+
+    public record UbicacionBolsin(double latitud, double longitud, LocalDateTime fechaHoraUltimaActualizacion) {
+    }
 
     public GestorSeguimientoBolsines(SesionRepository sesionRepository, BolsinRepository bolsinRepository,
             EmpleadoRepository empleadoRepository,
@@ -113,11 +120,13 @@ public class GestorSeguimientoBolsines {
 
     // Pasos 4: solicita al dispositivo GPS Tracker los datos de localización de los bolsines
     public void obtenerDatosGPS() {
-        // hardcodeamos la creacion de un adapter para el gps XTR-4500L
         IAdaptadorCoordenadasBolsines adapter = crearAdapter(ModeloGPS.XTR_4500L);
-
-        this.datosGPS = solicitarCoordenadasBolsines(adapter);
-
+        try {
+            datosGPS = solicitarCoordenadasBolsines(adapter);
+        } catch (RestClientException e) {
+            datosGPS = List.of();
+            log.warn("No se pudo consultar el GPS XTR-4500L ({})", e.getClass().getSimpleName());
+        }
     }
 
     // Crea el adapter segun uno de los 3 modelos disponibles en el enum
@@ -140,8 +149,18 @@ public class GestorSeguimientoBolsines {
         return adapter.recibirDatosGPS(numerosBolsines, cmUsuario.getCodigo(), codigosCMDestino);
     }
 
-    // Paso 6: PENDIENTE, se resuelve con InterfazGoogleMaps
+    // Paso 6: prepara las ubicaciones para que InterfazGoogleMaps dibuje el mapa.
     public void armarMapa() {
+        ubicacionesPorBolsin.clear();
+        for (List<Object> datos : datosGPS) {
+            Integer numeroBolsin = (Integer) datos.get(0);
+            ubicacionesPorBolsin.put(numeroBolsin, new UbicacionBolsin(
+                    (Double) datos.get(1), (Double) datos.get(2), (LocalDateTime) datos.get(3)));
+        }
+    }
+
+    public UbicacionBolsin conocerUbicacionBolsin(Integer numeroBolsin) {
+        return ubicacionesPorBolsin.get(numeroBolsin);
     }
 
     // Paso 7: el EB selecciona un bolsin del mapa
