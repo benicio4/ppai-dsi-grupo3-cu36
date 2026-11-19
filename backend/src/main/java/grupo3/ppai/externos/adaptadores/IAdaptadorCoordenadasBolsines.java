@@ -6,5 +6,6 @@ import java.util.List;
 public interface IAdaptadorCoordenadasBolsines {
     public void solicitarDatosGPS(Integer nroBolsin, String codigoCMOrigen, String codigoCMDestino);
     public List<ArrayList<Object>> recibirDatosGPS(List<Integer> listaNrosBolsines, String codigoCMOrigen, String[] codigosCMDestino);
-    public List<Object> adaptarDatosGPS();
+    // Una fila [numeroBolsin, latitud, longitud, fechaHoraUltimaActualizacion] por cada bolsin que devuelva la API
+    public List<ArrayList<Object>> adaptarDatosGPS();
 }

@@ -25,6 +25,7 @@ export default function PantSeguimientoBolsines() {
   const [cargando, setCargando] = useState(false)
   const [infoCMlogeado, setInfoCMlogeado] = useState('')
   const [bolsines, setBolsines] = useState([])
+  const [mapaBolsines, setMapaBolsines] = useState([]) // marcadores armados por GestorSeguimientoBolsines.armarMapa()
   const [checkboxFiltro, setCheckboxFiltro] = useState(false)
   const [txtNumPrecinto, setTxtNumPrecinto] = useState('')
   const [txtCMdestino, setTxtCMdestino] = useState('')
@@ -44,7 +45,7 @@ export default function PantSeguimientoBolsines() {
         setMensaje({ tipo: 'aviso', texto: datos.mensaje })
         return
       }
-      mostrarMapaBolsines(datos.bolsines)
+      mostrarMapaBolsines(datos.bolsines, datos.mapaBolsines ?? [])
       habilitarOpcionDeSeleccion()
       habilitarOpcionesDeFiltrado()
     } catch (error) {
@@ -58,6 +59,7 @@ export default function PantSeguimientoBolsines() {
     setHabilitada(true)
     setMensaje(null)
     setBolsines([])
+    setMapaBolsines([])
     setComboSeleccionBolsin('')
     setConsultandoEnvioMail(false)
   }
@@ -66,8 +68,9 @@ export default function PantSeguimientoBolsines() {
     setInfoCMlogeado(nombreCM)
   }
 
-  function mostrarMapaBolsines(bolsinesEnviados) {
+  function mostrarMapaBolsines(bolsinesEnviados, mapa) {
     setBolsines(bolsinesEnviados)
+    setMapaBolsines(mapa)
   }
 
   function habilitarOpcionDeSeleccion() {
@@ -117,6 +120,7 @@ export default function PantSeguimientoBolsines() {
     setHabilitada(false)
     setInfoCMlogeado('')
     setBolsines([])
+    setMapaBolsines([])
     setComboSeleccionBolsin('')
     setConsultandoEnvioMail(false)
     setMensaje({ tipo: 'aviso', texto: 'Se canceló la consulta de seguimiento de bolsines.' })
@@ -131,7 +135,17 @@ export default function PantSeguimientoBolsines() {
     )
   }, [bolsines, checkboxFiltro, txtNumPrecinto, txtCMdestino])
 
-  const bolsinSeleccionado = bolsines.find((b) => String(b.numeroBolsin) === String(comboSeleccionBolsin))
+  // Marcadores a dibujar: todos los que devolvió el GPS. Con el filtro activo solo quedan los de
+  // bolsines que pasan el filtro (los que no están en la lista local no tienen precinto ni destino).
+  const ubicacionesBolsines = useMemo(() => {
+    const porNumero = new Map(bolsines.map((b) => [b.numeroBolsin, b]))
+    const visibles = new Set(bolsinesFiltrados.map((b) => b.numeroBolsin))
+    return mapaBolsines
+      .filter((u) => !checkboxFiltro || visibles.has(u.numeroBolsin))
+      .map((u) => ({ ...u, bolsin: porNumero.get(u.numeroBolsin) ?? null }))
+  }, [mapaBolsines, bolsines, bolsinesFiltrados, checkboxFiltro])
+
+  const bolsinSeleccionado =bolsines.find((b) => String(b.numeroBolsin) === String(comboSeleccionBolsin))
 
   return (
     <main className="pantalla">
@@ -203,12 +217,14 @@ export default function PantSeguimientoBolsines() {
           </aside>
 
           <div className="mapa">
-            {bolsinesFiltrados.length > 0 && (
-              <InterfazGoogleMaps
-                bolsines={bolsinesFiltrados}
-                tomarSeleccionBolsin={tomarSeleccionBolsin}
-              />
-            )}
+            <InterfazGoogleMaps
+              ubicacionesBolsines={ubicacionesBolsines}
+              tomarSeleccionBolsin={tomarSeleccionBolsin}
+            />
+          </div>
+
+          {/* Debajo del mapa y de los filtros, ocupando todo el ancho */}
+          <div className="bolsines">
             {bolsinesFiltrados.length === 0 && <p>Ningún bolsín coincide con el filtro.</p>}
             <ul className="mapa__lista">
               {bolsinesFiltrados.map((b) => (

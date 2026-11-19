@@ -34,7 +34,7 @@ public class AdaptadorNavTrackQX_7A implements IAdaptadorCoordenadasBolsines {
 	};
 
 	@Override
-	public List<Object> adaptarDatosGPS() {
+	public List<ArrayList<Object>> adaptarDatosGPS() {
         throw new UnsupportedOperationException("Pendiente de implementar");
 
         // El adaptado seria algo asi

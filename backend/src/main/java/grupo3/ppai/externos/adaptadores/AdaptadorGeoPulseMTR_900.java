@@ -33,7 +33,7 @@ public class AdaptadorGeoPulseMTR_900 implements IAdaptadorCoordenadasBolsines {
 	};
 
 	@Override
-	public List<Object> adaptarDatosGPS() {
+	public List<ArrayList<Object>> adaptarDatosGPS() {
         throw new UnsupportedOperationException("Pendiente de implementar");
     }
 }

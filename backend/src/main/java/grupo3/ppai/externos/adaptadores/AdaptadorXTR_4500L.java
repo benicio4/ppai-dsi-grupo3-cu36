@@ -5,6 +5,7 @@ import java.time.format.DateTimeParseException;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 import org.slf4j.Logger;
@@ -45,7 +46,8 @@ public class AdaptadorXTR_4500L implements IAdaptadorCoordenadasBolsines {
             try {
                 this.solicitarDatosGPS(num, codigoCMOrigen, null);
 
-                arrayDeBolsines.add((ArrayList<Object>) this.adaptarDatosGPS());
+                // La API puede devolver uno o mas bolsines en "items": se agregan todos
+                arrayDeBolsines.addAll(this.adaptarDatosGPS());
 
             } catch (HttpClientErrorException.NotFound e) {
                 // 404: bolsín inexistente o código de CM que no coincide. Se saltea y se sigue con el resto.
@@ -70,22 +72,27 @@ public class AdaptadorXTR_4500L implements IAdaptadorCoordenadasBolsines {
 	};
 
 	@Override
-	public List<Object> adaptarDatosGPS() {
+	public List<ArrayList<Object>> adaptarDatosGPS() {
 
-		List<Object> arrayDatosBolsin = new ArrayList<Object>();
+		List<ArrayList<Object>> datosBolsines = new ArrayList<ArrayList<Object>>();
 
         // String -> JSON
         JSONObject jsonReal = new JSONObject(this.getJsonDevuelto());
 
-        // Saco el JSON de los datos del bolsin ubicado en la primer aposicion de array "items"
-        JSONObject jsonDatosBolsin = jsonReal.getJSONArray("items").getJSONObject(0);
+        // Recorro todos los bolsines que vengan en el array "items" (no solo el primero)
+        JSONArray items = jsonReal.getJSONArray("items");
+        for (int i = 0; i < items.length(); i++) {
+            JSONObject jsonDatosBolsin = items.getJSONObject(i);
 
-        // Nombres tomados del readme.md de la api de bolsines provista por la catedra
-        arrayDatosBolsin.add(jsonDatosBolsin.getInt("numeroBolsin"));
-        arrayDatosBolsin.add(jsonDatosBolsin.getDouble("latitud"));
-        arrayDatosBolsin.add(jsonDatosBolsin.getDouble("longitud"));
-        arrayDatosBolsin.add(LocalDateTime.parse(jsonDatosBolsin.getString("fechaHoraUltimaActualizacion")));
+            // Nombres tomados del readme.md de la api de bolsines provista por la catedra
+            ArrayList<Object> arrayDatosBolsin = new ArrayList<Object>();
+            arrayDatosBolsin.add(jsonDatosBolsin.getInt("numeroBolsin"));
+            arrayDatosBolsin.add(jsonDatosBolsin.getDouble("latitud"));
+            arrayDatosBolsin.add(jsonDatosBolsin.getDouble("longitud"));
+            arrayDatosBolsin.add(LocalDateTime.parse(jsonDatosBolsin.getString("fechaHoraUltimaActualizacion")));
+            datosBolsines.add(arrayDatosBolsin);
+        }
 
-		return arrayDatosBolsin;
+		return datosBolsines;
 	};
 };

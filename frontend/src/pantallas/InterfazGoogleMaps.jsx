@@ -16,11 +16,26 @@ function cargarGoogleMaps() {
   return bibliotecasMaps
 }
 
-export default function InterfazGoogleMaps({ bolsines, tomarSeleccionBolsin }) {
-  const ubicados = useMemo(() => bolsines.filter(({ ubicacion }) =>
-    Number.isFinite(ubicacion?.latitud) && Math.abs(ubicacion.latitud) <= 90 &&
-    Number.isFinite(ubicacion?.longitud) && Math.abs(ubicacion.longitud) <= 180
-  ), [bolsines])
+const formatoFecha = new Intl.DateTimeFormat('es-AR', { dateStyle: 'short', timeStyle: 'short' })
+
+function describirUbicacion({ numeroBolsin, fechaHoraUltimaActualizacion, bolsin }) {
+  const partes = [`Bolsín ${numeroBolsin}`]
+  if (bolsin) partes.push(`Precinto ${bolsin.numeroPrecinto}`, `Destino: ${bolsin.cmDestino}`)
+  else partes.push('No figura entre los bolsines enviados de la CM')
+  const fecha = new Date(fechaHoraUltimaActualizacion)
+  if (!Number.isNaN(fecha.getTime())) partes.push(`Última actualización: ${formatoFecha.format(fecha)}`)
+  return partes.join('\n')
+}
+
+/**
+ * <<interfaz>> InterfazGoogleMaps - recibe el mapa armado por GestorSeguimientoBolsines.armarMapa()
+ * (un elemento por bolsín que devolvió el GPS Tracker) y dibuja un marcador por cada uno.
+ */
+export default function InterfazGoogleMaps({ ubicacionesBolsines, tomarSeleccionBolsin }) {
+  const ubicados = useMemo(() => ubicacionesBolsines.filter(({ latitud, longitud }) =>
+    Number.isFinite(latitud) && Math.abs(latitud) <= 90 &&
+    Number.isFinite(longitud) && Math.abs(longitud) <= 180
+  ), [ubicacionesBolsines])
 
   if (!apiKey) {
     return <p className="mapa__aviso">Configurá la clave de Google Maps en frontend/.env.local.</p>
@@ -47,10 +62,10 @@ function MapaGoogle({ ubicados, tomarSeleccionBolsin }) {
     window.gm_authFailure = errorAutenticacion
 
     cargarGoogleMaps()
-      .then(([{ Map }, { AdvancedMarkerElement }, { LatLngBounds }]) => {
+      .then(([{ Map }, { AdvancedMarkerElement, PinElement }, { LatLngBounds }]) => {
         if (!activo) return
         const mapa = new Map(elemento, { mapId: 'DEMO_MAP_ID', streetViewControl: false })
-        setGoogleMaps({ mapa, AdvancedMarkerElement, LatLngBounds })
+        setGoogleMaps({ mapa, AdvancedMarkerElement, PinElement, LatLngBounds })
       })
       .catch(() => {
         if (activo) setError('No se pudo cargar Google Maps.')
@@ -65,36 +80,7 @@ function MapaGoogle({ ubicados, tomarSeleccionBolsin }) {
 
   useEffect(() => {
     if (!googleMaps || error) return
-
-    const { mapa, AdvancedMarkerElement, LatLngBounds } = googleMaps
-    const limites = new LatLngBounds()
-    const marcadores = ubicados.map(({ numeroBolsin, ubicacion }) => {
-      const position = { lat: ubicacion.latitud, lng: ubicacion.longitud }
-      limites.extend(position)
-      const marcador = new AdvancedMarkerElement({
-        map: mapa,
-        position,
-        title: `Bolsín ${numeroBolsin}`,
-        gmpClickable: true,
-      })
-      const seleccionar = () => tomarSeleccionBolsin(numeroBolsin)
-      marcador.addEventListener('gmp-click', seleccionar)
-      return { marcador, seleccionar }
-    })
-
-    if (limites.getNorthEast().equals(limites.getSouthWest())) {
-      mapa.setCenter(limites.getCenter())
-      mapa.setZoom(13)
-    } else {
-      mapa.fitBounds(limites, 36)
-    }
-
-    return () => {
-      for (const { marcador, seleccionar } of marcadores) {
-        marcador.removeEventListener('gmp-click', seleccionar)
-        marcador.map = null
-      }
-    }
+    return construirMapaConUbicacionesBolsines(googleMaps, ubicados, tomarSeleccionBolsin)
   }, [googleMaps, error, ubicados, tomarSeleccionBolsin])
 
   return (
@@ -104,4 +90,51 @@ function MapaGoogle({ ubicados, tomarSeleccionBolsin }) {
       <div ref={contenedor} className="mapa__google" aria-label="Mapa de bolsines" hidden={Boolean(error)} />
     </>
   )
+}
+
+// Dibuja un marcador por cada bolsín ubicado y encuadra el mapa para que se vean todos.
+// Devuelve una función que quita los marcadores (para cuando cambian las ubicaciones).
+function construirMapaConUbicacionesBolsines(
+  { mapa, AdvancedMarkerElement, PinElement, LatLngBounds },
+  ubicados,
+  tomarSeleccionBolsin,
+) {
+  const limites = new LatLngBounds()
+  const marcadores = ubicados.map((ubicacion) => {
+    const { numeroBolsin, latitud, longitud, bolsin } = ubicacion
+    const position = { lat: latitud, lng: longitud }
+    limites.extend(position)
+
+    // Solo se pueden seleccionar los bolsines enviados de la CM del usuario (paso 7)
+    const seleccionable = Boolean(bolsin)
+    const pin = new PinElement({
+      glyphText: String(numeroBolsin),
+      scale: 1.15,
+      ...(seleccionable ? {} : { background: '#9aa0a6', borderColor: '#5f6368', glyphColor: '#ffffff' }),
+    })
+    const marcador = new AdvancedMarkerElement({
+      map: mapa,
+      position,
+      title: describirUbicacion(ubicacion),
+      content: pin,
+      gmpClickable: seleccionable,
+    })
+    const seleccionar = () => tomarSeleccionBolsin(numeroBolsin)
+    if (seleccionable) marcador.addEventListener('gmp-click', seleccionar)
+    return { marcador, seleccionar }
+  })
+
+  if (limites.getNorthEast().equals(limites.getSouthWest())) {
+    mapa.setCenter(limites.getCenter())
+    mapa.setZoom(13)
+  } else {
+    mapa.fitBounds(limites, 36)
+  }
+
+  return () => {
+    for (const { marcador, seleccionar } of marcadores) {
+      marcador.removeEventListener('gmp-click', seleccionar)
+      marcador.map = null
+    }
+  }
 }

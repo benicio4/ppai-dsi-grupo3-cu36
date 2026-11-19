@@ -2,7 +2,7 @@ package grupo3.ppai.gestores;
 
 import java.time.LocalDateTime;
 import java.util.ArrayList;
-import java.util.HashMap;
+import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -61,14 +61,15 @@ public class GestorSeguimientoBolsines {
     private final List<Integer> numerosPrecintoBolsines = new ArrayList<>();
     private final List<String> cmDestinoBolsines = new ArrayList<>();
     private List<ArrayList<Object>> datosGPS = List.of();
-    private final Map<Integer, UbicacionBolsin> ubicacionesPorBolsin = new HashMap<>();
+    private final Map<Integer, UbicacionBolsin> ubicacionesPorBolsin = new LinkedHashMap<>();
     private Bolsin seleccionBolsin;
     private boolean seleccionConfirmacion;
     private String emailGCMD;
     private String mensajeEjecucionCU;
     private Empleado gerenteEmpleado;
 
-    public record UbicacionBolsin(double latitud, double longitud, LocalDateTime fechaHoraUltimaActualizacion) {
+    public record UbicacionBolsin(Integer numeroBolsin, double latitud, double longitud,
+            LocalDateTime fechaHoraUltimaActualizacion) {
     }
 
     public GestorSeguimientoBolsines(SesionRepository sesionRepository, BolsinRepository bolsinRepository,
@@ -149,14 +150,29 @@ public class GestorSeguimientoBolsines {
         return adapter.recibirDatosGPS(numerosBolsines, cmUsuario.getCodigo(), codigosCMDestino);
     }
 
-    // Paso 6: prepara las ubicaciones para que InterfazGoogleMaps dibuje el mapa.
+    // Paso 6: arma el mapa con un marcador por cada bolsin que devolvio el GPS Tracker
+    // (incluidos los que no esten en la lista local). InterfazGoogleMaps lo dibuja con
+    // construirMapaConUbicacionesBolsines().
     public void armarMapa() {
         ubicacionesPorBolsin.clear();
         for (List<Object> datos : datosGPS) {
-            Integer numeroBolsin = (Integer) datos.get(0);
-            ubicacionesPorBolsin.put(numeroBolsin, new UbicacionBolsin(
-                    (Double) datos.get(1), (Double) datos.get(2), (LocalDateTime) datos.get(3)));
+            Integer numeroBolsin = ((Number) datos.get(0)).intValue();
+            double latitud = ((Number) datos.get(1)).doubleValue();
+            double longitud = ((Number) datos.get(2)).doubleValue();
+            if (Math.abs(latitud) > 90 || Math.abs(longitud) > 180) {
+                log.warn("Coordenadas inválidas para el bolsín {}: ({}, {})", numeroBolsin, latitud, longitud);
+                continue;
+            }
+            // Si la API repite un bolsin, queda la lectura mas reciente
+            UbicacionBolsin nueva = new UbicacionBolsin(numeroBolsin, latitud, longitud, (LocalDateTime) datos.get(3));
+            ubicacionesPorBolsin.merge(numeroBolsin, nueva, (actual, otra) ->
+                    otra.fechaHoraUltimaActualizacion().isAfter(actual.fechaHoraUltimaActualizacion()) ? otra : actual);
         }
+    }
+
+    // Marcadores del mapa, en el orden en que llegaron del GPS Tracker
+    public List<UbicacionBolsin> getMapaBolsines() {
+        return List.copyOf(ubicacionesPorBolsin.values());
     }
 
     public UbicacionBolsin conocerUbicacionBolsin(Integer numeroBolsin) {

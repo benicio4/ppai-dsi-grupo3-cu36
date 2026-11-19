@@ -104,11 +104,11 @@ public class DataLoader implements CommandLineRunner {
 
         // Numeros de bolsin del 101 al 110: son los que la API mock de GPS reconoce
         // Enviados desde Cordoba: los que tiene que ver el EB logueado
-        crearBolsin(101, 5001, cba, ros, eb, new Estado[] { creado, enviado }, hace2Dias, ayer);
-        crearBolsin(102, 5002, cba, mza, eb, new Estado[] { creado, enviado }, hace2Dias, ayer);
-        crearBolsin(104, 5004, cba, ros, eb, new Estado[] { creado, enviado }, hace2Dias, ayer);
-        crearBolsin(105, 5005, cba, cat, eb, new Estado[] { creado, enviado }, hace2Dias, ayer);
-        crearBolsin(106, 5006, cba, bsas, eb, new Estado[] { creado, enviado }, hace2Dias, ayer);
+        crearBolsin(101, 5001, mza, ros, eb, new Estado[] { creado, enviado }, hace2Dias, ayer);
+        crearBolsin(102, 5002, mza, mza, eb, new Estado[] { creado, enviado }, hace2Dias, ayer);
+        crearBolsin(104, 5004, mza, ros, eb, new Estado[] { creado, enviado }, hace2Dias, ayer);
+        crearBolsin(105, 5005, mza, cat, eb, new Estado[] { creado, enviado }, hace2Dias, ayer);
+        crearBolsin(106, 5006, mza, bsas, eb, new Estado[] { creado, enviado }, hace2Dias, ayer);
         crearBolsin(110, 5007, cba, ros, eb, new Estado[] { creado, enviado }, hace2Dias, ayer);
         // No deben aparecer: uno todavia Creado, uno ya Recibido, dos con otra CM origen
         crearBolsin(108, 5008, cba, mza, eb, new Estado[] { creado }, hace2Dias);

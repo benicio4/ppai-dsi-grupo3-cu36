@@ -15,6 +15,7 @@ npm-debug.log*
 .env
 .env.*
 !.env.example
+frontend/package-lock.json
 
 # ---------- Base de datos H2 (cada integrante tiene la suya) ----------
 backend/data/
