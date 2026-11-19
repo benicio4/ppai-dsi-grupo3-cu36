@@ -1,4 +1,6 @@
 .pantalla {
+  width: 100%;
+  box-sizing: border-box;
   max-width: 1000px;
   margin: 0 auto;
   padding: 24px 16px;
@@ -57,10 +59,21 @@
 }
 
 .mapa {
-  border: 1px dashed #c8c6cc;
+  border: 1px solid #c8c6cc;
   border-radius: 8px;
   padding: 12px;
-  min-height: 260px;
+  min-width: 0;
+}
+
+.mapa__google {
+  width: 100%;
+  height: 360px;
+  border-radius: 6px;
+}
+
+/* Fila completa debajo de los filtros y el mapa */
+.bolsines {
+  grid-column: 1 / -1;
 }
 
 .mapa__aviso {

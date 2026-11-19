@@ -1,4 +1,5 @@
-import { useMemo, useState } from 'react'
+import { useCallback, useMemo, useState } from 'react'
+import InterfazGoogleMaps from './InterfazGoogleMaps.jsx'
 import './PantSeguimientoBolsines.css'
 
 const API = '/api/seguimiento-bolsines'
@@ -24,6 +25,7 @@ export default function PantSeguimientoBolsines() {
   const [cargando, setCargando] = useState(false)
   const [infoCMlogeado, setInfoCMlogeado] = useState('')
   const [bolsines, setBolsines] = useState([])
+  const [mapaBolsines, setMapaBolsines] = useState([]) // marcadores armados por GestorSeguimientoBolsines.armarMapa()
   const [checkboxFiltro, setCheckboxFiltro] = useState(false)
   const [txtNumPrecinto, setTxtNumPrecinto] = useState('')
   const [txtCMdestino, setTxtCMdestino] = useState('')
@@ -43,7 +45,7 @@ export default function PantSeguimientoBolsines() {
         setMensaje({ tipo: 'aviso', texto: datos.mensaje })
         return
       }
-      mostrarMapaBolsines(datos.bolsines)
+      mostrarMapaBolsines(datos.bolsines, datos.mapaBolsines ?? [])
       habilitarOpcionDeSeleccion()
       habilitarOpcionesDeFiltrado()
     } catch (error) {
@@ -57,6 +59,7 @@ export default function PantSeguimientoBolsines() {
     setHabilitada(true)
     setMensaje(null)
     setBolsines([])
+    setMapaBolsines([])
     setComboSeleccionBolsin('')
     setConsultandoEnvioMail(false)
   }
@@ -65,9 +68,9 @@ export default function PantSeguimientoBolsines() {
     setInfoCMlogeado(nombreCM)
   }
 
-  // PENDIENTE: dibujar el mapa con InterfazGoogleMaps; por ahora se listan los bolsines
-  function mostrarMapaBolsines(bolsinesEnviados) {
+  function mostrarMapaBolsines(bolsinesEnviados, mapa) {
     setBolsines(bolsinesEnviados)
+    setMapaBolsines(mapa)
   }
 
   function habilitarOpcionDeSeleccion() {
@@ -80,17 +83,15 @@ export default function PantSeguimientoBolsines() {
     setTxtCMdestino('')
   }
 
+  // Paso 8: se ofrece enviar el correo al GCM destino
+  const consultarEnvioMailGCM = useCallback(() => setConsultandoEnvioMail(true), [])
+
   // ---- Paso 7: el EB selecciona un bolsín ----
-  function tomarSeleccionBolsin(numeroBolsin) {
+  const tomarSeleccionBolsin = useCallback((numeroBolsin) => {
     setComboSeleccionBolsin(numeroBolsin)
     setMensaje(null)
     consultarEnvioMailGCM()
-  }
-
-  // Paso 8: se ofrece enviar el correo al GCM destino
-  function consultarEnvioMailGCM() {
-    setConsultandoEnvioMail(true)
-  }
+  }, [consultarEnvioMailGCM])
 
   // ---- Paso 9: el EB confirma (o no, A5) el envío del correo ----
   async function tomarSeleccionConfirmacion(confirmacion) {
@@ -119,6 +120,7 @@ export default function PantSeguimientoBolsines() {
     setHabilitada(false)
     setInfoCMlogeado('')
     setBolsines([])
+    setMapaBolsines([])
     setComboSeleccionBolsin('')
     setConsultandoEnvioMail(false)
     setMensaje({ tipo: 'aviso', texto: 'Se canceló la consulta de seguimiento de bolsines.' })
@@ -133,7 +135,17 @@ export default function PantSeguimientoBolsines() {
     )
   }, [bolsines, checkboxFiltro, txtNumPrecinto, txtCMdestino])
 
-  const bolsinSeleccionado = bolsines.find((b) => String(b.numeroBolsin) === String(comboSeleccionBolsin))
+  // Marcadores a dibujar: todos los que devolvió el GPS. Con el filtro activo solo quedan los de
+  // bolsines que pasan el filtro (los que no están en la lista local no tienen precinto ni destino).
+  const ubicacionesBolsines = useMemo(() => {
+    const porNumero = new Map(bolsines.map((b) => [b.numeroBolsin, b]))
+    const visibles = new Set(bolsinesFiltrados.map((b) => b.numeroBolsin))
+    return mapaBolsines
+      .filter((u) => !checkboxFiltro || visibles.has(u.numeroBolsin))
+      .map((u) => ({ ...u, bolsin: porNumero.get(u.numeroBolsin) ?? null }))
+  }, [mapaBolsines, bolsines, bolsinesFiltrados, checkboxFiltro])
+
+  const bolsinSeleccionado =bolsines.find((b) => String(b.numeroBolsin) === String(comboSeleccionBolsin))
 
   return (
     <main className="pantalla">
@@ -204,8 +216,15 @@ export default function PantSeguimientoBolsines() {
             </label>
           </aside>
 
-          <div className="mapa" aria-label="Mapa de bolsines">
-            <p className="mapa__aviso">Mapa pendiente (InterfazGoogleMaps). Bolsines enviados:</p>
+          <div className="mapa">
+            <InterfazGoogleMaps
+              ubicacionesBolsines={ubicacionesBolsines}
+              tomarSeleccionBolsin={tomarSeleccionBolsin}
+            />
+          </div>
+
+          {/* Debajo del mapa y de los filtros, ocupando todo el ancho */}
+          <div className="bolsines">
             {bolsinesFiltrados.length === 0 && <p>Ningún bolsín coincide con el filtro.</p>}
             <ul className="mapa__lista">
               {bolsinesFiltrados.map((b) => (
@@ -217,6 +236,7 @@ export default function PantSeguimientoBolsines() {
                     <strong>Bolsín {b.numeroBolsin}</strong>
                     <span>Precinto {b.numeroPrecinto}</span>
                     <span>Destino: {b.cmDestino}</span>
+                    {!b.ubicacion && <span>Ubicación no disponible</span>}
                   </button>
                 </li>
               ))}

@@ -32,6 +32,16 @@ npm run dev
 
 Abre en <http://localhost:5173>.
 
+## Google Maps (DSI-13)
+
+Creá `frontend/.env.local` y guardá ahí la clave web que permite **Maps JavaScript API** para `http://localhost:5173/*`.
+
+```dotenv
+VITE_GOOGLE_MAPS_API_KEY=
+```
+
+Reiniciá Vite después de pegar la clave. Con el backend y el GPS mock de la cátedra en ejecución, consultá los bolsines y seleccioná el marcador del **bolsín 101** (precinto **5001**). Los bolsines sin coordenadas permanecen disponibles en el listado.
+
 ## Proxy hacia el backend
 
 Para no configurar CORS en desarrollo, Vite reenvía `/api` al backend (puerto 8081).
@@ -72,7 +82,7 @@ src/
 |---|---|
 | `opcionConsultarUbiBolsines()` | Botón o menú "Consultar ubicación de bolsines" |
 | `habilitarPantalla()` / `mostrarNombreCM()` | Render de la página y encabezado con la CM |
-| `mostrarMapaBolsines()` | Componente `MapaBolsines` (por ahora una lista de coordenadas) |
+| `mostrarMapaBolsines()` | Componente `InterfazGoogleMaps` con los marcadores de los bolsines filtrados |
 | `habilitarOpcionDeSeleccion()` | Clic en un marcador o combo de bolsín |
 | `habilitarOpcionesDeFiltrado()` | Filtros por precinto y por CM destino |
 | `consultarEnvioMailGCM()` | Diálogo "¿Enviar correo al Gerente de la CM destino?" |

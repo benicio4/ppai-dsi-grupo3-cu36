@@ -32,6 +32,8 @@ import grupo3.ppai.repositorios.UsuarioRepository;
 public class DataLoader implements CommandLineRunner {
 
     private static final String NOMBRE_USUARIO_EB = "encargado.cba";
+    private static final String CORREO_COMISION_DEMO = "cm.cordoba@correo.test";
+    private static final String CODIGO_ORIGEN_DEMO = "CM-CBA-02";
 
     private final RolRepository rolRepository;
     private final ComisionMedicaRepository comisionMedicaRepository;
@@ -58,6 +60,8 @@ public class DataLoader implements CommandLineRunner {
     public void run(String... args) {
         if (usuarioRepository.count() == 0) {
             cargarDatos();
+        } else {
+            actualizarCodigoOrigenDemo();
         }
         asegurarSesionVigente();
     }
@@ -67,9 +71,9 @@ public class DataLoader implements CommandLineRunner {
         Rol rolGCM = rolRepository.save(new Rol("Gerente de Comisión Médica", "GCM"));
 
         ComisionMedica cba = comisionMedicaRepository.save(new ComisionMedica(
-                "CM-CBA-02", "Av. Colón 1234, Córdoba", "cm.cordoba@correo.test", "3514000001", "CM Córdoba"));
+                CODIGO_ORIGEN_DEMO, "Av. Colón 1234, Córdoba", CORREO_COMISION_DEMO, "3514000001", "CM Córdoba"));
         ComisionMedica ros = comisionMedicaRepository.save(new ComisionMedica(
-                "CM-ROS-04", "Bv. Oroño 500, Rosario", "cm.rosario@correo.test", "3414000002", "CM Rosario"));
+                "CM-ROS-02", "Bv. Oroño 500, Rosario", "cm.rosario@correo.test", "3414000002", "CM Rosario"));
         ComisionMedica mza = comisionMedicaRepository.save(new ComisionMedica(
                 "CM-MDZ-03", "San Martín 800, Mendoza", "cm.mendoza@correo.test", "2614000003", "CM Mendoza"));
         ComisionMedica cat = comisionMedicaRepository.save(new ComisionMedica(
@@ -100,17 +104,17 @@ public class DataLoader implements CommandLineRunner {
 
         // Numeros de bolsin del 101 al 110: son los que la API mock de GPS reconoce
         // Enviados desde Cordoba: los que tiene que ver el EB logueado
-        crearBolsin(101, 5001, cba, ros, eb, new Estado[] { creado, enviado }, hace2Dias, ayer);
-        crearBolsin(102, 5002, cba, mza, eb, new Estado[] { creado, enviado }, hace2Dias, ayer);
-        crearBolsin(104, 5004, cba, ros, eb, new Estado[] { creado, enviado }, hace2Dias, ayer);
-        crearBolsin(105, 5005, cba, cat, eb, new Estado[] { creado, enviado }, hace2Dias, ayer);
-        crearBolsin(106, 5006, cba, bsas, eb, new Estado[] { creado, enviado }, hace2Dias, ayer);
-        crearBolsin(107, 5007, cba, bsas, eb, new Estado[] { creado, enviado }, hace2Dias, ayer);
+        crearBolsin(101, 5001, mza, ros, eb, new Estado[] { creado, enviado }, hace2Dias, ayer);
+        crearBolsin(102, 5002, mza, mza, eb, new Estado[] { creado, enviado }, hace2Dias, ayer);
+        crearBolsin(104, 5004, mza, ros, eb, new Estado[] { creado, enviado }, hace2Dias, ayer);
+        crearBolsin(105, 5005, mza, cat, eb, new Estado[] { creado, enviado }, hace2Dias, ayer);
+        crearBolsin(106, 5006, mza, bsas, eb, new Estado[] { creado, enviado }, hace2Dias, ayer);
+        crearBolsin(110, 5007, cba, ros, eb, new Estado[] { creado, enviado }, hace2Dias, ayer);
         // No deben aparecer: uno todavia Creado, uno ya Recibido, dos con otra CM origen
         crearBolsin(108, 5008, cba, mza, eb, new Estado[] { creado }, hace2Dias);
         crearBolsin(109, 5009, cba, ros, eb, new Estado[] { creado, enviado, recibido }, hace2Dias, ayer, hoy);
         crearBolsin(103, 5003, mza, bsas, eb, new Estado[] { creado, enviado }, hace2Dias, ayer);
-        crearBolsin(110, 5010, ros, cba, eb, new Estado[] { creado, enviado }, hace2Dias, ayer);
+        crearBolsin(107, 5010, ros, cba, eb, new Estado[] { creado, enviado }, hace2Dias, ayer);
     }
 
     /** Arma el historial: cada cambio se cierra cuando empieza el siguiente; el ultimo queda actual. */
@@ -126,6 +130,16 @@ public class DataLoader implements CommandLineRunner {
             bolsin.agregarCambioEstado(anterior);
         }
         bolsinRepository.save(bolsin);
+    }
+
+    // Conserva la base H2 existente y alinea la comisión de prueba con el bolsín 101 del GPS.
+    private void actualizarCodigoOrigenDemo() {
+        usuarioRepository.findAll().stream()
+                .filter(usuario -> NOMBRE_USUARIO_EB.equals(usuario.getNombre()))
+                .map(Usuario::getCMEmpleado)
+                .filter(cm -> "CM-CBA-02".equals(cm.getCodigo()) && CORREO_COMISION_DEMO.equals(cm.getEmail()))
+                .findFirst()
+                .ifPresent(cm -> cm.setCodigo(CODIGO_ORIGEN_DEMO));
     }
 
     private void asegurarSesionVigente() {

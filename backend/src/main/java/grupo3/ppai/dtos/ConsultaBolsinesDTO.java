@@ -4,21 +4,30 @@ import java.util.ArrayList;
 import java.util.List;
 
 import grupo3.ppai.gestores.GestorSeguimientoBolsines;
+import grupo3.ppai.gestores.GestorSeguimientoBolsines.UbicacionBolsin;
 
-/** Respuesta de opcionConsultarUbiBolsines(): CM del usuario y bolsines enviados a mostrar. */
-public record ConsultaBolsinesDTO(String nombreCM, List<BolsinDTO> bolsines, String mensaje) {
+/**
+ * Respuesta de opcionConsultarUbiBolsines(): CM del usuario, bolsines enviados a mostrar y
+ * el mapa armado por el gestor (un marcador por cada bolsin que devolvio el GPS Tracker).
+ */
+public record ConsultaBolsinesDTO(String nombreCM, List<BolsinDTO> bolsines, List<UbicacionBolsin> mapaBolsines,
+        String mensaje) {
 
-    public record BolsinDTO(Integer numeroBolsin, Integer numeroPrecinto, String cmDestino) {
+    public record BolsinDTO(Integer numeroBolsin, Integer numeroPrecinto, String cmDestino,
+            UbicacionBolsin ubicacion) {
     }
 
     public static ConsultaBolsinesDTO desde(GestorSeguimientoBolsines gestor) {
         List<BolsinDTO> bolsines = new ArrayList<>();
         for (int i = 0; i < gestor.getNumerosBolsines().size(); i++) {
+            Integer numeroBolsin = gestor.getNumerosBolsines().get(i);
             bolsines.add(new BolsinDTO(
-                    gestor.getNumerosBolsines().get(i),
+                    numeroBolsin,
                     gestor.getNumerosPrecintoBolsines().get(i),
-                    gestor.getCmDestinoBolsines().get(i)));
+                    gestor.getCmDestinoBolsines().get(i),
+                    gestor.conocerUbicacionBolsin(numeroBolsin)));
         }
-        return new ConsultaBolsinesDTO(gestor.getNombreCMUsuario(), bolsines, gestor.getMensajeEjecucionCU());
+        return new ConsultaBolsinesDTO(gestor.getNombreCMUsuario(), bolsines, gestor.getMapaBolsines(),
+                gestor.getMensajeEjecucionCU());
     }
 }
